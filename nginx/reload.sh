@@ -1,0 +1,1 @@
+docker exec -it amoy-nginx service nginx reload

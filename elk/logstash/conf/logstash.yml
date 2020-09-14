@@ -1,0 +1,7 @@
+#X-Pack Monitoring
+xpack.monitoring.enabled: true
+xpack.monitoring.elasticsearch.hosts: ["http://106.14.19.68:9200", "http://106.14.19.68:9201", "http://106.14.19.68:9202"]
+xpack.monitoring.elasticsearch.password: oNtEOKzFbzOFYFPeRK0J
+xpack.monitoring.elasticsearch.username: logstash_system
+# X-Pack Management
+xpack.management.enabled: false
