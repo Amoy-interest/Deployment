@@ -1,0 +1,111 @@
+version: '2.0'
+services:
+  es01:
+    image: my_elasticsearch
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./es01/data:/usr/share/elasticsearch/data
+      - ./es01/logs:/usr/share/elasticsearch/logs
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elastic-certificates.p12:/usr/share/elasticsearch/config/elastic-certificates.p12
+    ports:
+      - 9200:9200      
+    networks:
+      - elastic
+
+  es02:
+    image: my_elasticsearch
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./es02/data:/usr/share/elasticsearch/data
+      - elastic
+      - ./es02/logs:/usr/share/elasticsearch/logs
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elastic-certificates.p12:/usr/share/elasticsearch/config/elastic-certificates.p12
+    ports:
+      - 9201:9200
+    networks:
+      - elastic
+
+  es03:
+    image: my_elasticsearch
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./es03/data:/usr/share/elasticsearch/data
+      - ./es03/logs:/usr/share/elasticsearch/logs
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elastic-certificates.p12:/usr/share/elasticsearch/config/elastic-certificates.p12
+    ports:
+      - 9202:9200
+    networks:
+      - elastic
+ 
+  kib01:
+    depends_on:
+      - es01
+    image: kibana:7.6.2
+    container_name: kib01
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://es01:9200
+      ELASTICSEARCH_HOSTS: http://es01:9200
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      - elastic
+      
+  logstash:
+    container_name: logstash
+    hostname: logstash
+    image: logstash:7.6.2
+    command: logstash -f ./conf/logstash-filebeat.conf
+    restart: always
+    volumes:
+       #映射到容器中
+      - ./logstash/conf/logstash-filebeat.conf:/usr/share/logstash/conf/logstash-filebeat.conf
+      - ./logstash/conf/logstash.yml:/usr/share/logstash/config/logstash.yml
+    environment:
+      - elasticsearch.hosts=http://es01:9200
+    ports:
+      - 5044:5044
+    depends_on:
+      - es01
+    networks:
+      - elastic
+networks:
+  elastic:
+    driver: bridge

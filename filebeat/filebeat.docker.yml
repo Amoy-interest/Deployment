@@ -1,0 +1,66 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+  # 需要收集的日志所在的位置，可使用通配符进行配置
+  - /logs/7532938e37da04c2d746d3726ba9ddda1be783e4de6a76c8ff9e9084e49b8ed0/*.log
+  multiline.pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}'
+  multiline.negate: true
+  multiline.match: after
+  fields:
+    fieldtype: "log_backend"
+  fields_under_root: true
+- type: log
+  enabled: true
+  paths:
+  # 需要收集的日志所在的位置，可使用通配符进行配置
+  - /logs/95e45299d278b261f747c9d2cd6a2c3d21e7cff7ccfa36aa1a9a2bc2f7c3defb/*.log
+  fields:
+    fieldtype: "log_mysql_master"
+  fields_under_root: true
+- type: log
+  enabled: true
+  paths:
+  # 需要收集的日志所在的位置，可使用通配符进行配置
+  - /logs/dcf8917870576b0b96a1172f952432fbd9038282a03a4a21e13a594dcaa8fa04/*.log
+  fields:
+    fieldtype: "log_mysql_slave"
+  fields_under_root: true
+- type: log
+  enabled: true
+  paths:
+  # 需要收集的日志所在的位置，可使用通配符进行配置
+  - /logs/mycat/mycat.log
+  multiline.pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}'
+  multiline.negate: true
+  multiline.match: after
+  fields:
+    fieldtype: "log_mycat"
+  fields_under_root: true   
+- type: log
+  enabled: true
+  paths:
+  # 需要收集的日志所在的位置，可使用通配符进行配置
+  - /logs/12e0be58c860ff470501758a31e4ddeb22b41535f8e9b4bf87354804c1d5b37a/*.log
+  fields:
+    fieldtype: "log_redis"
+  fields_under_root: true
+- type: log
+  enabled: true
+  paths:
+  # 需要收集的日志所在的位置，可使用通配符进行配置
+  - /logs/nginx/*.log
+  fields:
+    fieldtype: "log_nginx"
+  fields_under_root: true
+- type: log
+  enabled: true
+  paths:
+  # 需要收集的日志所在的位置，可使用通配符进行配置
+  - /logs/3cd5eb2e7dee167a2528fbd9c71c2f863445a0c089eab4277cffc409dafddd25/*.log
+  fields:
+    fieldtype: "log_recommend"
+  fields_under_root: true
+#日志输出配置(采用 logstash 收集日志，5044为logstash端口)
+output.logstash:
+  hosts: ['106.14.19.68:5044']
