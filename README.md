@@ -36,7 +36,7 @@
 
     Windows: [link](https://stackoverflow.com/questions/42111566/elasticsearch-in-windows-docker-image-vm-max-map-count) 
 
-  - Just follow the [Reference link]( https://www.cnblogs.com/woshimrf/p/docker-es7.html) , but you could use the modified image by the follwing command, more details about the configuration files is updating......(maybe)
+  - Just follow the [Reference link]( https://www.cnblogs.com/woshimrf/p/docker-es7.html) , but you could use the modified image by the follwing command, more details about the configuration files will be updated......(maybe)
 
     ```
     docker build  -t my_elasticsearch ./
